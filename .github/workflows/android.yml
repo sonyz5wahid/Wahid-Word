@@ -1,4 +1,4 @@
-name: Android build
+name: Build Wahid Word
 
 on:
   push:
@@ -7,14 +7,20 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build-debug:
     runs-on: ubuntu-latest
     env:
       ANDROID_HOME: /usr/local/lib/android/sdk
       ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+    defaults:
+      run:
+        working-directory: upstream/wordcraft-android/apps/wordcraft-android/android
     steps:
-      - name: Check out source
+      - name: Check out Wahid Word
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -23,44 +29,40 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Install Android platform
+      - name: Install Android SDK and NDK
         run: |
+          set -euxo pipefail
           SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort | tail -n 1)"
           test -n "$SDKMANAGER"
-          "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0"
-
-      - name: Install legacy NDK and Rust toolchain
-        run: |
-          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort | tail -n 1)"
           yes | "$SDKMANAGER" --licenses
-          "$SDKMANAGER" "ndk;23.2.8568313"
-          rustup toolchain install 1.99.0 --profile minimal --target armv7-linux-androideabi
-          rustup default 1.99.0
-          cargo install cargo-ndk --version 4.1.2 --locked
+          "$SDKMANAGER" "platforms;android-37" "build-tools;37.0.0" "ndk;29.0.14206865"
 
-      - name: Build WordCraft engine for Android 4.2 (ARMv7, API 17)
+      - name: Set up Rust and cargo-ndk
         working-directory: upstream/wordcraft-android
         run: |
           set -euxo pipefail
-          NDK_DIR="$ANDROID_HOME/ndk/23.2.8568313"
-          test -x "$NDK_DIR/toolchains/llvm/prebuilt/linux-x86_64/bin/clang"
-          export ANDROID_NDK_HOME="$NDK_DIR"
-          export ANDROID_NDK_ROOT="$NDK_DIR"
-          cargo ndk -t armeabi-v7a --platform 17 -o ../../app/src/main/jniLibs build --release -p wordcraft-android --lib
-          test -s ../../app/src/main/jniLibs/armeabi-v7a/libwordcraft_android.so
-          file ../../app/src/main/jniLibs/armeabi-v7a/libwordcraft_android.so
+          rustup toolchain install 1.99.0 --profile minimal --target aarch64-linux-android --target x86_64-linux-android
+          rustup default 1.99.0
+          cargo install cargo-ndk --version 4.1.2 --locked
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
+      - name: Build the real WordCraft Android application
+        run: |
+          set -euxo pipefail
+          chmod +x ./gradlew
+          ./gradlew --no-daemon --stacktrace assembleDebug
 
-      - name: Build debug APK
-        run: gradle --no-daemon :app:assembleDebug
+      - name: Verify APK package and signature
+        run: |
+          set -euxo pipefail
+          APK="app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+          "$ANDROID_HOME/build-tools/37.0.0/aapt" dump badging "$APK" | tee apk-badging.txt
+          grep -q "package: name='id.wahidword.app.debug'" apk-badging.txt
+          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --verbose "$APK"
 
-      - name: Upload debug APK
+      - name: Upload Wahid Word debug APK
         uses: actions/upload-artifact@v4
         with:
           name: wahid-word-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: upstream/wordcraft-android/apps/wordcraft-android/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
