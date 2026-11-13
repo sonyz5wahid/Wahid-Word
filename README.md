@@ -1,42 +1,39 @@
 # Wahid Word
 
-Wahid Word is an independent Android word processor inspired by the desktop workflow of Microsoft Word 2013. It is not a copy of Microsoft Word or WordCraft.
+Wahid Word is a rebranded Android build of the open-source [WordCraft for Android](https://github.com/artcraft-android/wordcraft-android) project. The goal is to ship the real WordCraft Android application under the **Wahid Word** name, not to recreate its interface with a placeholder editor.
 
-## Product goal
+## Upstream and license
 
-Build a practical, feature-rich document editor with a familiar desktop-style Ribbon interface, while keeping Android 4.2 (API 17) as the minimum supported platform.
+- Android application and UI: [artcraft-android/wordcraft-android](https://github.com/artcraft-android/wordcraft-android)
+- Document engine: [storytold/wordcraft](https://github.com/storytold/wordcraft)
+- Upstream license: MIT OR Apache-2.0. Original copyright and third-party notices are retained in the upstream source tree.
+- Wahid Word is an independent rebrand and is not affiliated with or endorsed by Microsoft. Microsoft Word is a Microsoft trademark.
 
-## Compatibility targets
+## Android project
 
-- Minimum Android version: Android 4.2 / API 17.
-- APK size: aim for approximately 50 MB where technically practical; actual size depends on the document engine, fonts, native libraries, and ABI packaging.
-- Legacy-device support is a first-class requirement. Modern Android-only APIs and libraries must not be required by the core editor.
-- Test on API 17 and newer Android versions before calling a feature supported.
+The Android Studio/Gradle project is:
 
-## Intended feature set
+`upstream/wordcraft-android/apps/wordcraft-android/android/`
 
-- Desktop-inspired Ribbon tabs: File, Home, Insert, Layout, Review, and View.
-- Rich text formatting: font family and size, bold, italic, underline, color, highlighting, alignment, lists, indentation, and paragraph spacing.
-- Page setup: A4 and other paper sizes, margins, orientation, page numbering, headers, and footers.
-- DOCX open, edit, and save.
-- Insert and resize images.
-- Access compatible system and user-installed fonts.
-- Find/replace, selection, clipboard, undo, and redo.
-- Export DOCX documents to PDF and print where the platform supports it.
-- Document recovery and autosave.
+The full upstream Rust workspace is retained at `upstream/wordcraft-android/`. The Android app uses Kotlin, Jetpack Compose, UniFFI/JNA and the real Rust WordCraft document engine.
 
-The feature list is a product target. Each feature must be implemented and tested; a menu item alone does not count as a working feature.
+## Compatibility
 
-## Development approach
+This rebrand follows the upstream Android app's requirements. **Minimum Android version: Android 10 (API 29)**. Android 4.2/API 17 is no longer a target for this project.
 
-The ArtCraft/WordCraft Android project is a reference for desktop-style interaction and document-app workflows, not a drop-in implementation for API 17. Its current Android builder uses a modern native stack and 64-bit ARM packaging, so Wahid Word will be designed as a separate legacy-compatible application.
+## Build
 
-The initial technical direction is a lightweight Java Android shell with a document-editing surface and a separately tested DOCX/PDF pipeline. The exact editing and conversion libraries will be selected only after an API-17 compatibility and document-fidelity prototype.
+Requirements: JDK 17, Android SDK Platform 37, Android NDK 29.0.14206865, Rust 1.99.0, and cargo-ndk 4.1.2.
 
-## Project status
+From the Android project directory:
 
-The repository now contains an early Java-based Android editor shell configured with `minSdk 17`, a compact Ribbon-style toolbar, a page-like editing area, and basic selected-text formatting controls. A GitHub Actions workflow is configured to build a debug APK; the first build is being validated.
+```bash
+cd upstream/wordcraft-android/apps/wordcraft-android/android
+./gradlew assembleDebug
+```
 
-This is an early UI prototype, **not a complete Word processor**. DOCX import/export, PDF export, image/table insertion, persistent save/open, and the full WordCraft feature set are not implemented yet. Do not treat the prototype as a release APK until the CI build succeeds and it has been tested on an Android 4.2 device or emulator.
+GitHub Actions builds the debug APK and uploads it as the `wahid-word-debug` artifact. A successful compile is not a substitute for installation and real-device testing; release readiness must be assessed separately.
 
-See [Product Specification](docs/PRODUCT_SPEC.md), [Roadmap](docs/ROADMAP.md), and [Android 4.2 Feasibility Audit](docs/API17_FEASIBILITY_AUDIT.md).
+## Branding
+
+The launcher label is **Wahid Word** and the launcher artwork is a custom blue Word-style document icon. Upstream WordCraft credits, licenses, and third-party attributions remain part of the project.

@@ -282,7 +282,7 @@ android {
     ndkVersion = "29.0.14206865"
 
     defaultConfig {
-        applicationId = "io.github.artcraftandroid.wordcraft"
+        applicationId = "id.wahidword.app"
         minSdk = minApi
         targetSdk = 36
         versionCode = appVersionCode
