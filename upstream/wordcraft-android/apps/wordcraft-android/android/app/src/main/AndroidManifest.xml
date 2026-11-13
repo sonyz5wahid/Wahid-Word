@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- documents other apps open with WordCraft by path (pickers need no permission) -->
+    <!-- Documents opened from other apps; the Storage Access Framework handles file access. -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
 
     <application
         android:name=".WordcraftApplication"
         android:allowBackup="false"
         android:enableOnBackInvokedCallback="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_wahid_word"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher"
+        android:roundIcon="@drawable/ic_wahid_word"
         android:supportsRtl="true"
         android:theme="@style/Theme.WordCraft">
 
@@ -24,7 +24,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!-- documents other apps open or edit with WordCraft -->
             <intent-filter android:label="@string/open_with">
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.EDIT" />
@@ -43,7 +42,6 @@
             </intent-filter>
         </activity>
 
-        <!-- WordCraft's files handed to other apps (share, export) -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.files"
