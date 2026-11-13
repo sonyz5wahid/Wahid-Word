@@ -35,6 +35,8 @@ The initial technical direction is a lightweight Java Android shell with a docum
 
 ## Project status
 
-Planning and compatibility investigation. No installable APK is available yet.
+The repository now contains an early Java-based Android editor shell configured with `minSdk 17`, a compact Ribbon-style toolbar, a page-like editing area, and basic selected-text formatting controls. A GitHub Actions workflow is configured to build a debug APK; the first build is being validated.
 
-See [Product Specification](docs/PRODUCT_SPEC.md) and [Roadmap](docs/ROADMAP.md).
+This is an early UI prototype, **not a complete Word processor**. DOCX import/export, PDF export, image/table insertion, persistent save/open, and the full WordCraft feature set are not implemented yet. Do not treat the prototype as a release APK until the CI build succeeds and it has been tested on an Android 4.2 device or emulator.
+
+See [Product Specification](docs/PRODUCT_SPEC.md), [Roadmap](docs/ROADMAP.md), and [Android 4.2 Feasibility Audit](docs/API17_FEASIBILITY_AUDIT.md).
