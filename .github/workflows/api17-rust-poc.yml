@@ -6,6 +6,9 @@ on:
     paths:
       - .github/workflows/api17-rust-poc.yml
       - upstream/wordcraft-android/**
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
