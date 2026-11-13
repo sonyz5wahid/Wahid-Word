@@ -1,5 +1,11 @@
 name: Import WordCraft Android upstream
 on:
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        description: "Branch tempat menaruh salinan upstream"
+        required: true
+        default: "wordcraft-upstream-port-api17"
   push:
     branches:
       - wordcraft-upstream-port-api17
@@ -16,7 +22,7 @@ jobs:
       - name: Check out Wahid Word port branch
         uses: actions/checkout@v4
         with:
-          ref: wordcraft-upstream-port-api17
+          ref: ${{ inputs.target_branch || github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Clone the exact upstream revision
         env:
@@ -68,4 +74,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add upstream/wordcraft-android
           git commit -m "chore: import WordCraft Android upstream for API 17 port"
-          git push origin wordcraft-upstream-port-api17
+          git push origin HEAD:${{ inputs.target_branch || github.ref_name }}
