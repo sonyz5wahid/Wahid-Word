@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - wordcraft-upstream-port-api17
+      - main
     paths:
       - .github/workflows/import-wordcraft.yml
 
