@@ -37,10 +37,15 @@ jobs:
       - name: Install cargo-ndk
         run: cargo install cargo-ndk --version 4.1.2 --locked
       - name: Compile WordCraft Android native engine for API 17
-        env:
-          ANDROID_NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/23.2.8568313
         working-directory: upstream/wordcraft-android
         run: |
+          set -euxo pipefail
+          NDK_DIR="$(find "${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk" -maxdepth 1 -type d -name '23.2.8568313' -print -quit)"
+          test -n "$NDK_DIR"
+          test -x "$NDK_DIR/toolchains/llvm/prebuilt/linux-x86_64/bin/clang"
+          export ANDROID_NDK_HOME="$NDK_DIR"
+          export ANDROID_NDK_ROOT="$NDK_DIR"
+          echo "Using NDK: $NDK_DIR"
           cargo ndk -t armeabi-v7a --platform 17 build --release -p wordcraft-android --lib
       - name: Upload native library proof
         if: success()
