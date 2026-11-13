@@ -33,7 +33,7 @@ Therefore, its current APK/build pipeline does not meet Wahid Word's API 17 and 
 
 ### Not yet proven
 
-- Whether the required WordCraft document-engine crates compile for `armv7-linux-androideabi` at an API-17-compatible platform level.
+- Whether the compiled native library runs correctly on a physical/emulated API 17 device (compile proof now passes; runtime remains untested).
 - Whether all native dependencies and transitive build scripts support 32-bit ARM and API 17.
 - Whether the rendering stack can run reliably on Android 4.2 devices and their available graphics drivers.
 - Whether DOCX round-trip fidelity and PDF generation can be retained within the memory and APK-size limits of old devices.
@@ -65,4 +65,15 @@ A release is not API-17-compatible until all of these pass on API 17:
 
 ## 6. Current project status
 
-This audit is a planning/engineering milestone only. It is **not** an APK, and it does not claim that the editor or DOCX/PDF features are implemented. The next implementation milestone is the API-17 Java shell plus a separate 32-bit Rust engine compatibility prototype.
+**Native compile milestone passed (2026-11-13):**
+
+- Built the actual `wordcraft-android` Rust library with Rust 1.99.0.
+- Target: `armv7-linux-androideabi` / Android ABI `armeabi-v7a`.
+- NDK: 23.2.8568313.
+- Platform: Android API 17.
+- Command: `cargo ndk -t armeabi-v7a --platform 17 build --release -p wordcraft-android --lib`.
+- GitHub Actions uploaded `libwordcraft_android.so` as artifact `wordcraft-armv7-api17-native-poc` (about 28 MB before compression).
+
+This proves the full native crate compiles for the API-17 ARMv7 target. It does **not** yet prove that it loads or runs on an Android 4.2 device, nor that the current Java editor calls it. The next milestone is packaging this library in the app, generating/connecting its UniFFI bindings, and testing runtime loading before implementing the document workflows.
+
+The current Java UI remains an early editor shell. DOCX import/export, PDF export, images/tables, and the complete WordCraft editing surface are not yet release-ready. No release APK should be published until the engine is integrated and tested on API 17.
