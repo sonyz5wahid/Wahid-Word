@@ -31,7 +31,7 @@ jobs:
 
       - name: Install Android SDK and NDK
         run: |
-          set -euxo pipefail
+          set -eux
           SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort | tail -n 1)"
           test -n "$SDKMANAGER"
           yes | "$SDKMANAGER" --licenses
