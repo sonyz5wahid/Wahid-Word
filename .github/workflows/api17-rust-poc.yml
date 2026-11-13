@@ -24,10 +24,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Install Android NDK r23
-        uses: android-actions/setup-android@v3
       - name: Install NDK 23.2.8568313
-        run: sdkmanager "ndk;23.2.8568313"
+        run: |
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager | sort -V | tail -n 1)"
+          yes | "$SDKMANAGER" --licenses
+          "$SDKMANAGER" "ndk;23.2.8568313"
       - name: Install Rust and ARMv7 Android target
         run: |
           rustup toolchain install 1.99.0 --profile minimal --target armv7-linux-androideabi
