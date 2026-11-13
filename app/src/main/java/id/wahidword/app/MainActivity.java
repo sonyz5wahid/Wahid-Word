@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        getWindow().setStatusBarColor(Color.rgb(23, 54, 93));
+        if (android.os.Build.VERSION.SDK_INT >= 21) {\n            getWindow().setStatusBarColor(Color.rgb(23, 54, 93));\n        }
         buildEditor();
     }
 
