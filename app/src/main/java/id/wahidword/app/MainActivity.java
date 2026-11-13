@@ -31,7 +31,9 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        if (android.os.Build.VERSION.SDK_INT >= 21) {\n            getWindow().setStatusBarColor(Color.rgb(23, 54, 93));\n        }
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            getWindow().setStatusBarColor(Color.rgb(23, 54, 93));
+        }
         buildEditor();
     }
 
@@ -101,7 +103,9 @@ public class MainActivity extends Activity {
         editor.setInputType(android.text.InputType.TYPE_CLASS_TEXT
                 | android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE
                 | android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        editor.setText("Wahid Word\n\nMulai menulis di sini.");
+        editor.setText("Wahid Word
+
+Mulai menulis di sini.");
         pageHolder.addView(editor, new LinearLayout.LayoutParams(-1, -2));
         pageScroll.addView(pageHolder, new ScrollView.LayoutParams(-1, -2));
         root.addView(pageScroll, new LinearLayout.LayoutParams(-1, 0, 1));
