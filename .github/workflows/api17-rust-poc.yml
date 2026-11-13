@@ -1,0 +1,56 @@
+name: API 17 Rust engine proof of concept
+on:
+  push:
+    branches:
+      - api17-rust-engine-poc
+    paths:
+      - .github/workflows/api17-rust-poc.yml
+      - upstream/wordcraft-android/**
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  armv7-api17:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install NDK 23.2.8568313
+        run: |
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager | sort -V | tail -n 1)"
+          yes | "$SDKMANAGER" --licenses
+          "$SDKMANAGER" "ndk;23.2.8568313"
+      - name: Install Rust and ARMv7 Android target
+        run: |
+          rustup toolchain install 1.99.0 --profile minimal --target armv7-linux-androideabi
+          rustup default 1.99.0
+          rustc --version
+      - name: Install cargo-ndk
+        run: cargo install cargo-ndk --version 4.1.2 --locked
+      - name: Compile WordCraft Android native engine for API 17
+        working-directory: upstream/wordcraft-android
+        run: |
+          set -euxo pipefail
+          NDK_DIR="$(find "${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk" -maxdepth 1 -type d -name '23.2.8568313' -print -quit)"
+          test -n "$NDK_DIR"
+          test -x "$NDK_DIR/toolchains/llvm/prebuilt/linux-x86_64/bin/clang"
+          export ANDROID_NDK_HOME="$NDK_DIR"
+          export ANDROID_NDK_ROOT="$NDK_DIR"
+          echo "Using NDK: $NDK_DIR"
+          cargo ndk -t armeabi-v7a --platform 17 build --release -p wordcraft-android --lib
+      - name: Upload native library proof
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordcraft-armv7-api17-native-poc
+          path: upstream/wordcraft-android/target/**/libwordcraft_android.so
+          if-no-files-found: error
