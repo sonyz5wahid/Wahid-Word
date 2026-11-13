@@ -49,6 +49,8 @@ jobs:
           cargo ndk -t armeabi-v7a --platform 17 -o ../../app/src/main/jniLibs build --release -p wordcraft-android --lib
           test -s ../../app/src/main/jniLibs/armeabi-v7a/libwordcraft_android.so
           file ../../app/src/main/jniLibs/armeabi-v7a/libwordcraft_android.so
+          cargo run --locked -p wordcraft-android-bindgen -- generate ../../app/src/main/jniLibs/armeabi-v7a/libwordcraft_android.so --language kotlin --out-dir ../../app/src/main/generated --no-format
+          find ../../app/src/main/generated -type f -maxdepth 5 -print
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
