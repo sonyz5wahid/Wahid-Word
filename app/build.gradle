@@ -1,0 +1,33 @@
+plugins { id 'com.android.application' }
+
+def runNumber = System.getenv("GITHUB_RUN_NUMBER")
+def codeFromRun = runNumber ? (runNumber.toInteger() + 100) : 1
+
+android {
+    namespace 'id.tulis.editor'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'id.tulis.editor'
+        minSdk 17
+        targetSdk 28
+        versionCode codeFromRun
+        versionName "2.2"
+    }
+    signingConfigs {
+        main {
+            storeFile file('wahidword.keystore')
+            storePassword 'wahidword'
+            keyAlias 'wahid'
+            keyPassword 'wahidword'
+        }
+    }
+    buildTypes {
+        debug { signingConfig signingConfigs.main }
+        release { minifyEnabled false; signingConfig signingConfigs.main }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    lint { abortOnError false; checkReleaseBuilds false }
+}
